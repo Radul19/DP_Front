@@ -20,7 +20,6 @@ export default function App() {
 					component={Login}
 					options={loginHeaderOpt}
 				/>
-
 				<Stack.Screen
 					name='Chat'
 					component={Chat}
