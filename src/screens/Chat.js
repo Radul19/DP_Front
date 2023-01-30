@@ -1,8 +1,8 @@
 import React, { useState, useLayoutEffect, useEffect } from "react";
 import { View, Text, Pressable, SafeAreaView, FlatList } from "react-native";
 import { Feather, Ionicons,AntDesign } from "@expo/vector-icons";
-import Modal from "../component/Modal";
-import ChatComponent from "../component/ChatComponent";
+import Modal from "../components/Modal";
+import ChatComponent from "../components/ChatComponent";
 import socket from "../utils/socket";
 import { styles } from "../utils/styles";
 

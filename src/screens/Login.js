@@ -13,36 +13,36 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const Login = ({ navigation }) => {
 	const [username, setUsername] = useState("");
 
-	const storeUsername = async () => {
-		try {
-			await AsyncStorage.setItem("username", username);
-			navigation.navigate("Chat");
-		} catch (e) {
-			Alert.alert("Error! While saving username");
-		}
-	};
+	// const storeUsername = async () => {
+	// 	try {
+	// 		await AsyncStorage.setItem("username", username);
+	// 		navigation.navigate("Chat");
+	// 	} catch (e) {
+	// 		Alert.alert("Error! While saving username");
+	// 	}
+	// };
 
 	const handleSignIn = () => {
-		if (username.trim()) {
-			storeUsername();
-		} else {
-			Alert.alert("Username is required.");
-		}
+		// if (username.trim()) {
+		// 	storeUsername();
+		// } else {
+		// 	Alert.alert("Username is required.");
+		// }
 	};
 
-	useLayoutEffect(() => {
-		const getUsername = async () => {
-			try {
-				const value = await AsyncStorage.getItem("username");
-				if (value !== null) {
-					navigation.navigate("Chat");
-				}
-			} catch (e) {
-				console.error("Error while loading username!");
-			}
-		};
-		getUsername();
-	}, []);
+	// useLayoutEffect(() => {
+	// 	const getUsername = async () => {
+	// 		try {
+	// 			const value = await AsyncStorage.getItem("username");
+	// 			if (value !== null) {
+	// 				navigation.navigate("Chat");
+	// 			}
+	// 		} catch (e) {
+	// 			console.error("Error while loading username!");
+	// 		}
+	// 	};
+	// 	getUsername();
+	// }, []);
 
 	return (
 		<SafeAreaView style={styles.loginscreen}>
