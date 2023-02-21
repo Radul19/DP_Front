@@ -47,11 +47,19 @@ const Dashboard = ({ navigation }) => {
   /** TEST */
   const { userData } = useContext(Context);
 
+  const [textInpt, setTextInpt] = useState("");
   const [modal, setModal] = useState(false);
   const [deliData, setDeliData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [emptyResult, setEmptyResult] = useState(false);
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState({
+    place: {
+      country: "",
+      state: "",
+      city: "",
+    },
+    del_status: 0,
+  });
 
   const ScrollProps = {
     contentContainerStyle: { flexGrow: 1 },
@@ -62,8 +70,8 @@ const Dashboard = ({ navigation }) => {
 
   const fetchData = async () => {
     // setEmptyResult(false);
-    setDeliData([]);
-    const { status, data } = await getDeliverys({});
+    // setDeliData([]);
+    const { status, data } = await getDeliverys({ text: textInpt, ...filters });
     if (status === 200) {
       setDeliData(data);
     } else if (status === 204) {
@@ -76,10 +84,13 @@ const Dashboard = ({ navigation }) => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      await fetchData();
-      setLoading(false);
+      const timeoutID = setTimeout(async () => {
+        // Send Axios request here
+        adminLoading();
+      }, 2000);
+      return () => clearTimeout(timeoutID);
     })();
-  }, []);
+  }, [textInpt]);
 
   useEffect(() => {
     socket.on("found_chat", (chat) => {
@@ -87,14 +98,26 @@ const Dashboard = ({ navigation }) => {
     });
   }, [socket]);
 
+  const adminLoading = async () => {
+    setLoading(true);
+    await fetchData();
+    setLoading(false);
+  };
+
   const findChat = (deli_id) => {
     socket.emit("find_chat", [userData._id, deli_id]);
   };
-  const openModal = () => {
-    // setModal(true);
+  const openModal = async () => {
+    // await fetchData()
+    setModal(true);
   };
   const closeModal = () => {
     setModal(false);
+  };
+
+  const changeText = (text) => {
+    // console.log(text);
+    setTextInpt(text);
   };
 
   const [refreshing, setRefreshing] = useState(false);
@@ -105,6 +128,13 @@ const Dashboard = ({ navigation }) => {
     setRefreshing(false);
   }, []);
 
+  const filterProps = {
+    filters,
+    setFilters,
+    visible: modal,
+    close: closeModal,
+  };
+
   return (
     <>
       <ScrollView
@@ -114,7 +144,7 @@ const Dashboard = ({ navigation }) => {
         }
       >
         <Header navigation={navigation} />
-        <InputCtn openModal={openModal} />
+        <InputCtn openModal={openModal} {...{ textInpt, changeText }} />
         <Loader active={loading} />
         {!loading && (
           <SearchResults
@@ -124,7 +154,7 @@ const Dashboard = ({ navigation }) => {
           />
         )}
         {emptyResult && <EmptyText />}
-        <FilterModal visible={modal} close={closeModal} />
+        <FilterModal {...filterProps} />
       </ScrollView>
       <Box position="absolute" bottom={0} w="100%">
         <Navbar state={1} />
@@ -165,9 +195,12 @@ const Header = ({ navigation }) => {
             " " +
             userData.second_name.split(" ", 1)}
         </Text>
-        <Text {...{ color: "light.50", fontSize: 12 }}>
-          {state} - {city}
-        </Text>
+        {/* {state && city && (
+          <Text {...{ color: "light.50", fontSize: 12 }}>
+            {state} - {city}
+          </Text>
+        )} */}
+        <Text {...{ color: "light.50", fontSize: 12 }}>Zulia - Cabimas</Text>
       </Box>
       {/* <HamburgerIcon color="yellow.500" ml="auto" mr={2} size={5} /> */}
       <Menu
@@ -179,7 +212,8 @@ const Header = ({ navigation }) => {
               ml="auto"
               mr={2}
               accessibilityLabel="More options menu"
-              {...triggerProps}
+              // {...triggerProps}
+              _pressed={{ opacity: 0.5 }}
             >
               <HamburgerIcon color="yellow.500" size={5} />
             </Pressable>
@@ -211,9 +245,11 @@ const Header = ({ navigation }) => {
   );
 };
 ///// INPUT
-const InputCtn = ({ openModal }) => {
+const InputCtn = ({ openModal, textInpt, changeText }) => {
   const { colors } = useTheme();
   const inputProps = {
+    onChangeText: changeText,
+    value: textInpt,
     placeholder: "Buscar delivery",
     bg: "light.50",
     borderWidth: 2,
@@ -251,13 +287,14 @@ const InputCtn = ({ openModal }) => {
       <Input {...inputProps} type="text" />
       <Box {...resultTextCtnProps}>
         <Text color="light.50">Resultados de Busqueda</Text>
-        <Button
+        <Pressable
           onPress={openModal}
           bg="#ffffff00"
           _pressed={{ bg: "#ffffff30" }}
+          p={2}
         >
           <IconFilterDown_Lined size="24" color={colors.yellow[500]} />
-        </Button>
+        </Pressable>
       </Box>
     </Box>
   );
@@ -342,7 +379,25 @@ const Card = ({ user, findChat }) => {
 };
 
 ///// FILTER MODAL
-const FilterModal = ({ visible, close }) => {
+const FilterModal = ({ visible, close, setFilters, filters }) => {
+  const [copyValues, setCopyValues] = useState({
+    place: {
+      country: "",
+      state: "",
+      city: "",
+    },
+    del_status: 0,
+  });
+
+  const pressCancel = () => {
+    setCopyValues(filters);
+    close();
+  };
+  const pressSave = () => {
+    setFilters(copyValues);
+    close();
+  };
+
   //PROPS
   const propsHeader = {
     backgroundColor: "blueGray.800",
@@ -351,30 +406,26 @@ const FilterModal = ({ visible, close }) => {
   const propsBtnCancel = {
     variant: "ghost",
     colorScheme: "blueGray",
-    onPress: () => {
-      setShowModal(false);
-    },
+    onPress: pressCancel,
     _text: { color: "light.50" },
   };
   const propsBtnSave = {
-    onPress: () => {
-      setShowModal(false);
-    },
+    onPress: pressSave,
   };
   return (
-    <Modal isOpen={visible} onClose={close}>
+    <Modal isOpen={visible} onClose={pressCancel}>
       <Modal.Content w="85%" backgroundColor="blueGray.800">
         <Modal.CloseButton />
         <Modal.Header {...propsHeader}>Filtro</Modal.Header>
         <Modal.Body>
-          <FilterLocation />
-          <RadioBtns />
-          <FilterSlider />
+          <FilterLocation {...{ copyValues, setCopyValues }} />
+          <RadioBtns {...{ copyValues, setCopyValues }} />
+          {/* <FilterSlider /> */}
         </Modal.Body>
         <Modal.Footer backgroundColor="blueGray.800">
           <Button.Group space={2}>
-            <Button {...propsBtnCancel}>Cancel</Button>
-            <Button {...propsBtnSave}>Save</Button>
+            <Button {...propsBtnCancel}>Cancelar</Button>
+            <Button {...propsBtnSave}>Guardar</Button>
           </Button.Group>
         </Modal.Footer>
       </Modal.Content>
@@ -382,13 +433,13 @@ const FilterModal = ({ visible, close }) => {
   );
 };
 ///// RADIO BTNS
-const RadioBtns = () => {
-  const [value, setValue] = useState("1");
+const RadioBtns = ({ copyValues, setCopyValues }) => {
+  // const [value, setValue] = useState("1");
   const updateValue = (newVal) => {
-    setValue(newVal);
+    setCopyValues((prev) => ({ ...prev, del_status: newVal }));
   };
   const propsRadioSuccess = {
-    value: "1",
+    value: 0,
     my: 2,
     size: "sm",
     _text: { color: "light.50" },
@@ -398,7 +449,7 @@ const RadioBtns = () => {
     },
   };
   const propsRadioBusy = {
-    value: "2",
+    value: 1,
     my: 2,
     size: "sm",
     _text: { color: "light.50" },
@@ -408,7 +459,7 @@ const RadioBtns = () => {
     },
   };
   const propsRadioWait = {
-    value: "3",
+    value: 2,
     my: 2,
     size: "sm",
     _text: { color: "light.50" },
@@ -418,10 +469,14 @@ const RadioBtns = () => {
     },
   };
   return (
-    <Radio.Group name="myRadioGroup" value={value} onChange={updateValue}>
+    <Radio.Group
+      name="myRadioGroup"
+      value={copyValues.del_status}
+      onChange={updateValue}
+    >
       <Radio {...propsRadioSuccess}>Disponible</Radio>
       <Radio {...propsRadioBusy}>Ocupado</Radio>
-      <Radio {...propsRadioWait}>En espera</Radio>
+      <Radio {...propsRadioWait}>Ausente</Radio>
     </Radio.Group>
   );
 };
@@ -466,26 +521,35 @@ const FilterSlider = () => {
   );
 };
 
-const FilterLocation = () => {
-  const [loc, setLoc] = useState({
-    country: "",
-    state: "",
-    city: "",
-  });
+const FilterLocation = ({ copyValues, setCopyValues }) => {
+  const { place } = copyValues;
+
+  const changePlace = (newValue, key) => {
+    if (key === "country") {
+      setCopyValues({
+        ...copyValues,
+        place: {
+          country: newValue,
+          state: "",
+          city: "",
+        },
+      });
+    } else {
+      setCopyValues({
+        ...copyValues,
+        place: { ...copyValues.place, [key]: newValue },
+      });
+    }
+  };
 
   const propsCountry = {
-    onValueChange: (itemValue) =>
-      setLoc({
-        country: itemValue,
-        state: "",
-        city: "",
-      }),
+    onValueChange: (itemValue) => changePlace(itemValue, "country"),
     _selectedItem: {
       borderRadius: 6,
       bg: "yellow.500",
       endIcon: <CheckIcon size="5" color="muted.900" ml="auto" />,
     },
-    selectedValue: loc.country,
+    selectedValue: place.country,
     minWidth: "200",
     accessibilityLabel: "Choose Service",
     placeholder: "Selecciona pais",
@@ -499,14 +563,13 @@ const FilterLocation = () => {
     },
   };
   const propsState = {
-    onValueChange: (itemValue) =>
-      setLoc((prev) => ({ ...prev, state: itemValue })),
+    onValueChange: (itemValue) => changePlace(itemValue, "state"),
     _selectedItem: {
       borderRadius: 6,
       bg: "yellow.500",
       endIcon: <CheckIcon size="5" color="muted.900" ml="auto" />,
     },
-    selectedValue: loc.state,
+    selectedValue: place.state,
     minWidth: "200",
     accessibilityLabel: "Choose Service",
     placeholder: "Selecciona el estado",
@@ -520,14 +583,13 @@ const FilterLocation = () => {
     },
   };
   const propsCity = {
-    onValueChange: (itemValue) =>
-      setLoc((prev) => ({ ...prev, city: itemValue })),
+    onValueChange: (itemValue) => changePlace(itemValue, "city"),
     _selectedItem: {
       borderRadius: 6,
       bg: "yellow.500",
       endIcon: <CheckIcon size="5" color="muted.900" ml="auto" />,
     },
-    selectedValue: loc.city,
+    selectedValue: place.city,
     minWidth: "200",
     accessibilityLabel: "Choose Service",
     placeholder: "Selecciona la ciudad",
@@ -548,18 +610,19 @@ const FilterLocation = () => {
       </Text>
       <Select {...propsCountry}>
         <Select.Item label="Venezuela" value="Venezuela" />
+        <Select.Item label="Sin ubicación" value="" />
       </Select>
-      {loc.country.length > 0 && (
+      {place.country === "Venezuela" && (
         <Select {...propsState}>
           {places.map((item, index) => (
             <Select.Item label={item.state} value={item.state} key={index} />
           ))}
         </Select>
       )}
-      {loc.state.length > 0 && (
+      {place.state.length > 0 && (
         <Select {...propsCity}>
           {places.map((item) => {
-            if (item.state === loc.state) {
+            if (item.state === place.state) {
               return item.cities.map((item2, index) => (
                 <Select.Item
                   label={item2.city}

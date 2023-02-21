@@ -41,13 +41,13 @@ const AdminDashboard = ({ navigation }) => {
               Icon={User19}
               text="Solicitudes de usuario"
             />
-            <Option
+            {/* <Option
               press={deliOpt}
               Icon={Delivery1}
               text="Solicitudes de Delivery"
-            />
+            /> */}
             <Option press={reportOpt} Icon={ErrorSign} text="Denuncias" />
-            <Option press={rehabOpt} Icon={SearchIcon} text="Buscar usuario" />
+            {/* <Option press={rehabOpt} Icon={SearchIcon} text="Buscar usuario" /> */}
           </Box>
         </Box>
       </ScrollView>

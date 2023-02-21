@@ -65,3 +65,10 @@
 "native-base": "^3.4.25"
 
 eas build --profile production --platform android
+
+///
+Location map
+Denuncia
+Aprov deny Denuncia
+Keep account
+Searchbar

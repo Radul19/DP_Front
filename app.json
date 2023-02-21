@@ -26,7 +26,8 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.radulito19.app",
-      "userInterfaceStyle": "automatic"
+      "userInterfaceStyle": "automatic",
+      "permissions":["ACCESS_BACKGROUND_LOCATION"]
     },
     "web": {
       "favicon": "./assets/favicon.png"

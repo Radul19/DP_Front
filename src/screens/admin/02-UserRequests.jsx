@@ -25,6 +25,8 @@ const UserRequests = ({ navigation }) => {
   const fetchData = async () => {
     setLoading(true);
     const { data, status } = await getUserRequests();
+    console.log(data)
+    console.log(status)
     setLoading(false);
     /// evaluate status
     if (status === 200) {

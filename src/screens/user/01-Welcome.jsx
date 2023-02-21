@@ -1,5 +1,5 @@
 import { Dimensions, View } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Text,
@@ -10,10 +10,13 @@ import {
   useTheme,
 } from "native-base";
 import Logo from "../../images/LogoWelcome.png";
+import { getLocalData } from "../../components/localStorage";
+import { Context } from "../../utils/Context";
 
 const ww = Dimensions.get("window").width;
 
 const Welcome = ({ navigation }) => {
+  const {setUserData} = useContext(Context)
   const { colors, btnPrimary, btnSecondary } = useTheme();
 
   const [count, setCount] = useState(0);
@@ -28,6 +31,24 @@ const Welcome = ({ navigation }) => {
   const registerPress = () => {
     navigation.navigate("Register");
   };
+
+  
+	const localUser = async () => {
+		console.log('this works')
+		const data = await getLocalData("@userLogin");
+		if (data) {
+			console.log('this too')
+			const parseData = JSON.parse(data)
+			setUserData(parseData);
+			navigation.navigate('Dashboard')
+		}
+	}
+  
+	useEffect(() => {
+		localUser()
+	}, [])
+
+
 
   //// PROPS
   const BoxCtnProps = {

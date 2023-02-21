@@ -5,7 +5,7 @@ const User_Card = ({ user }) => {
   const { name, card_id, place, email, profile_pic } = user;
   return (
     <HStack>
-      <Image source={profile_pic} alt="profilepic" borderRadius={4} size={32} />
+      <Image source={{uri:profile_pic}} alt="profilepic" borderRadius={4} size={32} />
       <Box ml={4} justifyContent="space-between">
         <Text color="light.50" fontSize={18}>
           {name}

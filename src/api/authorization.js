@@ -1,6 +1,8 @@
 import axios from "axios"
-export const url = "http://192.168.1.109:4000/"
+// export const url = "http://192.168.1.109:4000/"
 // export const url = "https://dp-back.vercel.app/"
+// export const url = "http://192.168.43.188:4000/"
+export const url = "http://172.20.10.5:4000/"
 
 const offline = false
 
@@ -24,19 +26,6 @@ const catchError = async (err) => {
 }
 
 export const getUserRequests = async (data) => {
-    // if (offline) return {
-    //     status: 200,
-    //     data: {
-    //         _id: "63beac15946ef914d796d677",
-    //         name: 'Marta Violet',
-    //         email: 'correo@gmail.com',
-    //         card_ID: '29519805',
-    //         password: '$2b$10$VfcIRHDjwvG/pf1EQgYK6u9qYgN0s0GShqOlgCtv2m99tH4Y4bkbi',
-    //         user_type: 3,
-    //         second_name: 'Perez Gomez',
-    //         __v: 0
-    //     }
-    // }
     let response
     await axios.get(`${url}getUserRequests`).then(res => {
         // console.log(res.data)
@@ -47,9 +36,32 @@ export const getUserRequests = async (data) => {
 
     return response
 }
-export const userRequestAction = async (user_id,num) => {
+export const userRequestAction = async (user_id, num) => {
     let response
-    await axios.post(`${url}userRequestAction`,{user_id,num}).then(res => {
+    await axios.post(`${url}userRequestAction`, { user_id, num }).then(res => {
+        // console.log(res.data)
+        response = res
+    }).catch(err => {
+        response = catchError(err)
+    })
+
+    return response
+}
+export const getComplaints = async () => {
+    let response
+    await axios.get(`${url}getComplaints`).then(res => {
+        // console.log(res.data)
+        response = res
+    }).catch(err => {
+        response = catchError(err)
+    })
+
+    return response
+}
+export const complaintAction = async (complaint_id, target_id, action) => {
+    console.log(action)
+    let response
+    await axios.post(`${url}complaintAction`, { complaint_id, target_id, action }).then(res => {
         // console.log(res.data)
         response = res
     }).catch(err => {

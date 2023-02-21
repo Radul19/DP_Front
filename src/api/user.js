@@ -1,6 +1,8 @@
 import axios from "axios"
-export const url = "http://192.168.1.109:4000/"
+// export const url = "http://192.168.1.109:4000/"
 // export const url = "https://dp-back.vercel.app/"
+// export const url = "http://192.168.43.188:4000/"
+export const url = "http://172.20.10.5:4000/"
 
 const offline = false
 
@@ -118,3 +120,28 @@ export const getMyChat = async (user_id) => {
 
     return response
 }
+
+export const changePfp = async (base64,user_id,old_pfp) => {
+    let response
+    await axios.post(`${url}changePfp`, {base64,user_id,old_pfp}).then(res => {
+        // console.log(res.data)
+        response = res
+    }).catch(err => {
+        response = catchError(err)
+    })
+
+    return response
+}
+
+export const createComplaint = async (title,description,creator,target,images) => {
+    let response
+    await axios.post(`${url}createComplaint`, {title,description,creator,target,images}).then(res => {
+        // console.log(res.data)
+        response = res
+    }).catch(err => {
+        response = catchError(err)
+    })
+
+    return response
+}
+

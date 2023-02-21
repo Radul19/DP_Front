@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 //👇🏻 React Navigation configurations
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NativeBaseProvider, extendTheme, StatusBar } from "native-base";
 import * as Location from "expo-location";
@@ -31,6 +31,10 @@ import ComplaintsData from "./src/screens/admin/07-ComplaintsData";
 import SearchUserPage from "./src/screens/admin/08-SearchUserPage";
 import UserDataPage from "./src/screens/admin/09-UserDataPage";
 import ChatList from "./src/screens/user/08-ChatList";
+import ChangePFP from "./src/screens/user/09-ChangePFP";
+import Test from "./src/screens/Test";
+import Complaint from "./src/screens/user/10-Complaint";
+import { getLocalData } from "./src/components/localStorage";
 
 const config = {
 	dependencies: {
@@ -95,14 +99,31 @@ export default function App() {
 		location, setLocation, userData, setUserData
 	}
 
+	// const getLocationInfo = async () => {
+	// 	let { status } = await Location.requestForegroundPermissionsAsync();
+	// 	if (status !== "granted") {
+	// 		//   setMsg("error", "Permission to access location was denied");
+	// 		return;
+	// 	}
+	// 	if (location.country.length < 1) {
+	// 		// let {coords} = await Location.getCurrentPositionAsync({});
+	// 		// const res = await getLocation([coords.longitude, coords.latitude]);
+	// 		const res = await getLocation([-71.47, 10.39]);
+	// 		setLocation({ ...res, auto: true });
+	// 	}
+	// };
 	const getLocationInfo = async () => {
-		let { status } = await Location.requestForegroundPermissionsAsync();
+		let { status } = await Location.requestBackgroundPermissionsAsync();
 		if (status !== "granted") {
 			//   setMsg("error", "Permission to access location was denied");
 			return;
 		}
 		if (location.country.length < 1) {
-			// let {coords} = await Location.getCurrentPositionAsync({});
+			let { coords } = await Location.getCurrentPositionAsync({
+				accuracy: Location.Accuracy.Highest,
+				maximumAge: 10000,
+			});
+			console.log(coords)
 			// const res = await getLocation([coords.longitude, coords.latitude]);
 			const res = await getLocation([-71.47, 10.39]);
 			setLocation({ ...res, auto: true });
@@ -123,16 +144,18 @@ export default function App() {
 					<Stack.Navigator screenOptions={{
 						headerShown: false
 					}} >
-						{/* <Stack.Screen name="AdminDashboard" component={AdminDashboard} /> */}
-
+						{/* <Stack.Screen name="Complaint" component={Complaint} /> */}
+						{/* <Stack.Screen name="ChangePFP" component={ChangePFP} /> */}
 						{/** USER PAGES */}
 						<Stack.Group  >
 							<Stack.Screen name="Welcome" component={Welcome} />
 							<Stack.Screen name='Login' component={Login} />
 							<Stack.Screen name="Register" component={Register} />
-							<Stack.Screen name="Profile" component={Profile} />
 							<Stack.Screen name="Dashboard" component={Dashboard} />
+							<Stack.Screen name="Profile" component={Profile} />
+							<Stack.Screen name="ChangePFP" component={ChangePFP} />
 							<Stack.Screen name="Chat" component={Chat} />
+							<Stack.Screen name="Complaint" component={Complaint} />
 							<Stack.Screen name="DeliveryPage" component={DeliveryPage} />
 							<Stack.Screen name="ChatList" component={ChatList} />
 						</Stack.Group>
@@ -185,3 +208,4 @@ const messageHeaderOpt = {
 	},
 	headerTintColor: '#FFC900',
 }
+

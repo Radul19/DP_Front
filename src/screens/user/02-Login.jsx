@@ -17,6 +17,7 @@ import {
 import React, { useContext, useEffect, useState } from "react";
 import { Dimensions } from "react-native";
 import { login } from "../../api/user";
+import { getLocalData, storeLocalData } from "../../components/localStorage";
 import { Context } from "../../utils/Context";
 
 const inptInitial = {
@@ -31,6 +32,7 @@ const Login = ({ navigation }) => {
   const [spin, setSpin] = useState(false);
   const [submitError, setSubmitError] = useState(false);
   const [inputs, setInputs] = useState(inptInitial);
+  const [check, setCheck] = useState(false);
 
   /// ACTIONS
   const pressLogin = async () => {
@@ -43,6 +45,10 @@ const Login = ({ navigation }) => {
     // });
     setSpin(false);
     if (status === 200) {
+      if(check){
+        const stringData = JSON.stringify(data)
+        await storeLocalData('@userLogin',stringData)
+      }
       setInputs(inptInitial);
       setUserData(data);
       navigation.navigate("Dashboard");
@@ -51,7 +57,7 @@ const Login = ({ navigation }) => {
     }
   };
   /// TEMPORAL
-  // const pressLogin2 = async () => {
+  const pressLogin2 = async () => {
     // setSubmitError(false);
     // setSpin(true);
     // const { status, data } = await login({
@@ -66,7 +72,7 @@ const Login = ({ navigation }) => {
     // } else {
     //   setSubmitError(data.msg);
     // }
-  // };
+  };
 
   const pressBack = () => {
     navigation.navigate("Register");
@@ -74,7 +80,7 @@ const Login = ({ navigation }) => {
   /// PROPS
   const btnLoginProps = {
     onPress: pressLogin,
-    // onLongPress: pressLogin2,
+    onLongPress: pressLogin2,
     isLoading: spin,
     isLoadingText: "Iniciando sesión",
     spinnerPlacement: "end",
@@ -111,16 +117,16 @@ const Login = ({ navigation }) => {
           <StackEmail {...{ inputs, setInputs }} />
           <StackPassword {...{ inputs, setInputs }} />
         </FormControl>
-        <FormControl isInvalid={submitError}>
+        <FormControl isInvalid={submitError} pr={6} > 
           <FormControl.ErrorMessage
-            leftIcon={<WarningOutlineIcon size="xs" />}
+            leftIcon={<WarningOutlineIcon size="xs" mr={2} />}
             ml={4}
           >
             {/* Complete los campos correctamente */}
             {submitError && submitError}
           </FormControl.ErrorMessage>
         </FormControl>
-        <StackCheck />
+        <StackCheck {...{ check, setCheck }} />
         <Box alignItems={"center"} mt="auto">
           <Button {...btnLoginProps}>Iniciar Sesion</Button>
           <Button {...btnBackProps}>No tienes una cuenta? Registrate</Button>
@@ -192,39 +198,36 @@ const StackPassword = ({ inputs, setInputs }) => {
     </Stack>
   );
 };
-const StackCheck = () => {
-  const checkStyles = {};
+const StackCheck = ({ check, setCheck }) => {
+  const checkStyles = {
+    accessibilityLabel:"This is a dummy checkbox",
+    _text: { color: "light.50", fontSize: 12, ml: 0 },
+    bg: "light.50",
+    _checked: {
+      bg: "yellow.500",
+      borderColor: "yellow.500",
+      _icon: {
+        color: "black",
+        _pressed: {
+          bg: "light.50",
+          borderColor: "light.50",
+          _icon: { color: "black" },
+        },
+      },
+      _pressed: {
+        borderColor: "yellow.500",
+        bg: "yellow.300",
+      },
+    },
+    _pressed: {
+      bg: "light.50",
+      borderColor: "light.50",
+      _icon: { color: "black" },
+    },
+  };
   return (
     <Stack mx={4} mt={4} mb={12}>
-      <Checkbox
-        value="test"
-        accessibilityLabel="This is a dummy checkbox"
-        {...{
-          _text: { color: "light.50", fontSize: 12, ml: 0 },
-          bg: "light.50",
-          _checked: {
-            bg: "yellow.500",
-            borderColor: "yellow.500",
-            _icon: {
-              color: "black",
-              _pressed: {
-                bg: "light.50",
-                borderColor: "light.50",
-                _icon: { color: "black" },
-              },
-            },
-            _pressed: {
-              borderColor: "yellow.500",
-              bg: "yellow.300",
-            },
-          },
-          _pressed: {
-            bg: "light.50",
-            borderColor: "light.50",
-            _icon: { color: "black" },
-          },
-        }}
-      >
+      <Checkbox onChange={setCheck} value={check} {...checkStyles}>
         Mantener sesion iniciada
       </Checkbox>
     </Stack>

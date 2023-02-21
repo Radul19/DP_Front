@@ -60,7 +60,7 @@ const DeliveryCard = ({ user, findChat }) => {
             </Text>
           </Box>
         </Box>
-        <Text color="light.50">Avenida Universidad</Text>
+        <Text color="light.50">Zulia - Cabimas</Text>
       </Pressable>
       {/* <InfoIcon ml={4} mr={4} alignSelf="center" /> */}
     </Box>

@@ -51,7 +51,7 @@ const DeliveryProfile = ({ navigation: nav, route }) => {
         )}
       </ScrollView>
       <Box position="absolute" bottom={0} w="100%">
-        <Navbar state={1} />
+        <Navbar state={user._id === userData._id ? 4 : 1} />
       </Box>
     </>
   );
@@ -140,10 +140,6 @@ const OwnContent = ({ user, nav }) => {
 
   const [statusMenu, setStatusMenu] = useState(delivery_status);
   const [statusSpin, setStatusSpin] = useState(false);
-
-  const goChat = () => {
-    nav.navigate("Chat");
-  };
 
   const onChangeStatus = async () => {
     const num = statusMenu < 4 ? statusMenu + 1 : 0;

@@ -124,7 +124,7 @@ const UserRequestsData = ({ navigation: nav, route }) => {
                     fontWeight="bold"
                     color={isPressed ? "yellow.500" : "darkBlue.900"}
                   >
-                    {approveSpin ? "Aprovando" : "Aprovar"}
+                    {approveSpin ? "Aprobando" : "Aprobar"}
                   </Text>
                   {approveSpin && <Spinner color="darkBlue.900" ml={4} />}
                 </>
@@ -136,7 +136,7 @@ const UserRequestsData = ({ navigation: nav, route }) => {
         <Box h={24}></Box>
         <Box flexDirection="row" mt="auto" justifyContent="space-between">
           <ButtonLeft nav={nav} />
-          <ButtonRight nav={nav} />
+          {/* <ButtonRight nav={nav} /> */}
         </Box>
       </Box>
     </ScrollView>

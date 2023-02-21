@@ -4,6 +4,7 @@ import { RefreshControl } from "react-native";
 import { getMyChat } from "../../api/user";
 import DeliveryCard from "../../components/DeliveryCard";
 import Loader from "../../components/Loader";
+import Navbar from "../../components/Navbar";
 import { Context } from "../../utils/Context";
 import socket from "../../utils/socket";
 
@@ -47,54 +48,49 @@ const ChatList = ({ navigation: nav }) => {
   }, []);
 
   return (
-    <ScrollView
-      bg="darkBlue.900"
-      flex={1}
-      {...{ contentContainerStyle: { flexGrow: 1 } }}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
-      <Box flex={1} p={4}>
-        <Heading color="light.50">Chats</Heading>
-        <Loader active={loading} />
-        {emptyResult && <EmptyText />}
-        {!loading && (
-          <Box px={4} pb={16} bg="darkBlue.900">
-            {chatData.map(
-              (chat) => {
-                const { _id, participants } = chat;
-                if (participants[0]._id === userData._id) {
-
-                  return (
-                    <DeliveryCard
-                      key={_id}
-                      user={participants[1]}
-                      findChat={findChat}
-                    />
-                  );
-                } else {
-                  return (
-                    <DeliveryCard
-                      key={_id}
-                      user={participants[0]}
-                      findChat={findChat}
-                    />
-                  );
+    <>
+      <ScrollView
+        bg="darkBlue.900"
+        flex={1}
+        {...{ contentContainerStyle: { flexGrow: 1 } }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <Box flex={1}>
+          <Heading p={4} color="light.50">
+            Chats
+          </Heading>
+          <Loader active={loading} />
+          {emptyResult && <EmptyText />}
+          {!loading && (
+            <Box px={4} pb={16} bg="darkBlue.900">
+              {chatData.map(
+                (chat) => {
+                  const { _id, participants } = chat;
+                  let anotherUser =
+                    participants[0]._id === userData._id
+                      ? participants[1]
+                      : participants[0];
+                  if (anotherUser.user_type > 1) {
+                    return (
+                      <DeliveryCard
+                        key={_id}
+                        user={anotherUser}
+                        findChat={findChat}
+                      />
+                    );
+                  }
                 }
-              }
-              // userData._id !== chat._id && (
-              //   <DeliveryCard
-              //     key={chat._id}
-              //     user={chat}
-              //     findChat={findChat}
-              //   />
-              // )
-            )}
-          </Box>
-        )}
+              )}
+            </Box>
+          )}
+        </Box>
+      </ScrollView>
+      <Box position="absolute" bottom={0} w="100%">
+        <Navbar state={3} />
       </Box>
-    </ScrollView>
+    </>
   );
 };
 

@@ -195,7 +195,11 @@ export default Register;
 
 const StackUsername = ({ inputs, setInputs, errors, setErrors }) => {
   const name = "name";
-  const handleChange = (text) => setInputs({ ...inputs, [name]: text });
+  const handleChange = (text) => {
+    if (text.match(/^[a-zA-Z]+$/)) {
+      setInputs({ ...inputs, [name]: text });
+    }
+  };
 
   const iptUsername = {
     value: inputs[name],
@@ -227,7 +231,11 @@ const StackUsername = ({ inputs, setInputs, errors, setErrors }) => {
 
 const StackSecName = ({ inputs, setInputs, errors, setErrors }) => {
   const name = "second_name";
-  const handleChange = (text) => setInputs({ ...inputs, [name]: text });
+  const handleChange = (text) => {
+    if (text.match(/^[a-zA-Z]+$/)) {
+      setInputs({ ...inputs, [name]: text });
+    }
+  };
   /// PROPS
   const iptEmail = {
     value: inputs[name],
@@ -282,7 +290,7 @@ const StackEmail = ({ inputs, setInputs, errors, setErrors }) => {
         Must be atleast 6 characters.
       </FormControl.HelperText> */}
       <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-        Atleast 6 characters are required.
+        El formato del correo no es válido
       </FormControl.ErrorMessage>
     </FormControl>
   );
@@ -364,13 +372,16 @@ const StackConfirmPassword = ({ inputs, setInputs, errors, setErrors }) => {
 const StackIDCard = ({ inputs, setInputs, errors, setErrors }) => {
   const name = "card_id";
   const handleChange = (text) => {
-    // const newText = text.replace('.',"")
-    const bool = text.length > 3 || text.length === 0;
-    setErrors({ ...errors, [name]: !bool });
-    if ((/[0-9]/.test(text) || text.length === 0) && text.length < 9) {
-      const withoutLetter = text.replace(/[^0-9]/g, "");
-      setInputs({ ...inputs, [name]: withoutLetter });
+    if (text.match(/^[0-9]*$/) && text.length < 9) {
+      setInputs({ ...inputs, [name]: text });
     }
+    // const newText = text.replace('.',"")
+    // const bool = text.length > 3 || text.length === 0;
+    // setErrors({ ...errors, [name]: !bool });
+    // if ((/[0-9]/.test(text) || text.length === 0) && text.length < 9) {
+    //   const withoutLetter = text.replace(/[^0-9]/g, "");
+    //   setInputs({ ...inputs, [name]: withoutLetter });
+    // }
   };
   const iptIDCard = {
     value: inputs[name],

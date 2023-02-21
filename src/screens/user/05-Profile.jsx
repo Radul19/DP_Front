@@ -25,11 +25,13 @@ import Exit from "../../svg/Sign_out_square_fill.svg";
 import DeliveryCheck from "../../svg/delivery18.svg";
 import { Context } from "../../utils/Context";
 import { Delivery6, Shield33 } from "../../components/IconMonstr";
+import { deleteLocalData, storeLocalData } from "../../components/localStorage";
 
 const Profile = ({ navigation }) => {
   const { userData } = useContext(Context);
 
-  const closeSession = () => {
+  const closeSession = async () => {
+    await deleteLocalData("@userLogin");
     navigation.navigate("Login");
   };
 
@@ -88,8 +90,8 @@ const Profile = ({ navigation }) => {
             );
           }}
         </Pressable>
-        <Option text="Cambiar ubicacion por defecto" Icon={Pin} />
-        <Option text="Editar informacion de perfil" Icon={Edit} />
+        {/* <Option text="Cambiar ubicacion por defecto" Icon={Pin} />
+        <Option text="Editar informacion de perfil" Icon={Edit} /> */}
         <Option text="Cerrar sesion" Icon={Exit} press={closeSession} />
       </Box>
       <Box mt="auto" bg="darkBlue.900">
@@ -102,6 +104,7 @@ const Profile = ({ navigation }) => {
 export default Profile;
 
 const Header = ({ navigation, selfie }) => {
+  const pressEditPfp = () => navigation.navigate("ChangePFP");
   return (
     <Box>
       <Box {...propsHeader}>
@@ -115,7 +118,9 @@ const Header = ({ navigation, selfie }) => {
           <ArrowBackIcon {...{ color: "yellow.500", size: 6 }} />
         </Button>
 
-        <Avatar {...avatarProps} source={{ uri: selfie }} />
+        <Pressable _pressed={{ opacity: 0.5 }} mt={4} onPress={pressEditPfp}>
+          <Avatar size="2xl" source={{ uri: selfie }} />
+        </Pressable>
         <Menu
           placement="bottom right"
           w="100%"
@@ -177,7 +182,6 @@ const propsHeader = {
 
 const avatarProps = {
   size: "2xl",
-  mt: 4,
 };
 
 const propsContent = {
