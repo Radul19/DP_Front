@@ -36,18 +36,20 @@ const Login = ({ navigation }) => {
 
   /// ACTIONS
   const pressLogin = async () => {
+    const { auto, ...filterLoc } = location;
     setSubmitError(false);
     setSpin(true);
-    const { status,data } = await login({ ...inputs });
+    const { status, data } = await login({ ...inputs, location: filterLoc });
     // const { status, data } = await login({
     //   email: "correox@gmail.com",
     //   password: "123123",
+    //   location: filterLoc,
     // });
     setSpin(false);
     if (status === 200) {
-      if(check){
-        const stringData = JSON.stringify(data)
-        await storeLocalData('@userLogin',stringData)
+      if (check) {
+        const stringData = JSON.stringify(data);
+        await storeLocalData("@userLogin", stringData);
       }
       setInputs(inptInitial);
       setUserData(data);
@@ -58,11 +60,13 @@ const Login = ({ navigation }) => {
   };
   /// TEMPORAL
   const pressLogin2 = async () => {
+    // const { auto, ...filterLoc } = location;
     // setSubmitError(false);
     // setSpin(true);
     // const { status, data } = await login({
     //   email: "correo@gmail.com",
     //   password: "123123",
+    //   location: filterLoc,
     // });
     // setSpin(false);
     // if (status === 200) {
@@ -117,7 +121,7 @@ const Login = ({ navigation }) => {
           <StackEmail {...{ inputs, setInputs }} />
           <StackPassword {...{ inputs, setInputs }} />
         </FormControl>
-        <FormControl isInvalid={submitError} pr={6} > 
+        <FormControl isInvalid={submitError} pr={6}>
           <FormControl.ErrorMessage
             leftIcon={<WarningOutlineIcon size="xs" mr={2} />}
             ml={4}
@@ -200,7 +204,7 @@ const StackPassword = ({ inputs, setInputs }) => {
 };
 const StackCheck = ({ check, setCheck }) => {
   const checkStyles = {
-    accessibilityLabel:"This is a dummy checkbox",
+    accessibilityLabel: "This is a dummy checkbox",
     _text: { color: "light.50", fontSize: 12, ml: 0 },
     bg: "light.50",
     _checked: {

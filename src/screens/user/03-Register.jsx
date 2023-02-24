@@ -81,6 +81,8 @@ const checkError = (item) => {
 };
 
 const compareObjects = (item1, item2) => {
+  console.log(JSON.stringify(item1));
+  console.log(JSON.stringify(item2));
   return JSON.stringify(item1) === JSON.stringify(item2);
 };
 const Register = ({ navigation }) => {
@@ -117,7 +119,10 @@ const Register = ({ navigation }) => {
       }
     } else {
       /// register admin
-      if (compareObjects(errorValues, errors) && checkValues(inputs)) {
+      const { card_pic: a_, selfie: b_, ...admErrors } = errors;
+      const { card_pic: c_, selfie: d_, ...adminErrorValues } = errorValues;
+      if (checkError(adminErrorValues) && checkError(admErrors) && checkValues(inputs)) {
+        // console.log("vat");
         setSpin(true);
         const res = await register(inputs);
         setSpin(false);
@@ -126,6 +131,8 @@ const Register = ({ navigation }) => {
         } else {
           setSubmitError(res.data.msg);
         }
+      } else {
+        setSubmitError("Ingrese los datos correctamente");
       }
     }
   };
@@ -171,7 +178,7 @@ const Register = ({ navigation }) => {
         <StackPassword {...generalProps} />
         <StackConfirmPassword {...generalProps} />
         <StackIDCard {...generalProps} />
-        <StackCardPic {...generalProps} />
+        {!inputs.admin_bool && <StackCardPic {...generalProps} />}
         {!inputs.admin_bool && <StackSelfie {...generalProps} />}
 
         {openCode && <StackCheckAdmin {...generalProps} />}

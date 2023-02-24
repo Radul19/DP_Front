@@ -54,11 +54,11 @@ const Dashboard = ({ navigation }) => {
   const [emptyResult, setEmptyResult] = useState(false);
   const [filters, setFilters] = useState({
     place: {
-      country: "",
-      state: "",
-      city: "",
+      country: false,
+      state: false,
+      city: false,
     },
-    del_status: 0,
+    del_status: false,
   });
 
   const ScrollProps = {
@@ -69,8 +69,6 @@ const Dashboard = ({ navigation }) => {
   };
 
   const fetchData = async () => {
-    // setEmptyResult(false);
-    // setDeliData([]);
     const { status, data } = await getDeliverys({ text: textInpt, ...filters });
     if (status === 200) {
       setDeliData(data);
@@ -83,14 +81,14 @@ const Dashboard = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      setLoading(true);
+      // setLoading(true);
       const timeoutID = setTimeout(async () => {
         // Send Axios request here
         adminLoading();
-      }, 2000);
+      }, 3000);
       return () => clearTimeout(timeoutID);
     })();
-  }, [textInpt]);
+  }, [textInpt,filters]);
 
   useEffect(() => {
     socket.on("found_chat", (chat) => {
@@ -133,6 +131,7 @@ const Dashboard = ({ navigation }) => {
     setFilters,
     visible: modal,
     close: closeModal,
+    adminLoading,
   };
 
   return (
@@ -202,45 +201,6 @@ const Header = ({ navigation }) => {
         )} */}
         <Text {...{ color: "light.50", fontSize: 12 }}>Zulia - Cabimas</Text>
       </Box>
-      {/* <HamburgerIcon color="yellow.500" ml="auto" mr={2} size={5} /> */}
-      <Menu
-        w="190"
-        bg="blueGray.800"
-        trigger={(triggerProps) => {
-          return (
-            <Pressable
-              ml="auto"
-              mr={2}
-              accessibilityLabel="More options menu"
-              // {...triggerProps}
-              _pressed={{ opacity: 0.5 }}
-            >
-              <HamburgerIcon color="yellow.500" size={5} />
-            </Pressable>
-          );
-        }}
-      >
-        <Menu.Group title="Opciones" _title={{ color: "light.50" }}>
-          <Menu.Item
-            _text={{ color: "light.50" }}
-            {...{ borderTopWidth: 1, borderTopColor: "blueGray.600" }}
-          >
-            Opcion uno
-          </Menu.Item>
-          <Menu.Item
-            _text={{ color: "light.50" }}
-            {...{ borderTopWidth: 1, borderTopColor: "blueGray.600" }}
-          >
-            Opcion dos
-          </Menu.Item>
-          <Menu.Item
-            _text={{ color: "light.50" }}
-            {...{ borderTopWidth: 1, borderTopColor: "blueGray.600", mb: -1 }}
-          >
-            Opcion tres
-          </Menu.Item>
-        </Menu.Group>
-      </Menu>
     </Box>
   );
 };
@@ -382,11 +342,11 @@ const Card = ({ user, findChat }) => {
 const FilterModal = ({ visible, close, setFilters, filters }) => {
   const [copyValues, setCopyValues] = useState({
     place: {
-      country: "",
-      state: "",
-      city: "",
+      country:false,
+      state:false,
+      city:false,
     },
-    del_status: 0,
+    del_status: false,
   });
 
   const pressCancel = () => {
@@ -438,6 +398,16 @@ const RadioBtns = ({ copyValues, setCopyValues }) => {
   const updateValue = (newVal) => {
     setCopyValues((prev) => ({ ...prev, del_status: newVal }));
   };
+  const propsRadioAll = {
+    value: false,
+    my: 2,
+    size: "sm",
+    _text: { color: "light.50" },
+    _checked: {
+      borderColor: "primary.500",
+      _icon: { color: "primary.500" },
+    },
+  };
   const propsRadioSuccess = {
     value: 0,
     my: 2,
@@ -469,15 +439,19 @@ const RadioBtns = ({ copyValues, setCopyValues }) => {
     },
   };
   return (
+    <>
+    <Text color="light.50" fontSize={14} mt={2} >Estado</Text>
     <Radio.Group
       name="myRadioGroup"
       value={copyValues.del_status}
       onChange={updateValue}
     >
+      <Radio {...propsRadioAll}>Todos</Radio>
       <Radio {...propsRadioSuccess}>Disponible</Radio>
       <Radio {...propsRadioBusy}>Ocupado</Radio>
       <Radio {...propsRadioWait}>Ausente</Radio>
     </Radio.Group>
+    </>
   );
 };
 
@@ -530,8 +504,8 @@ const FilterLocation = ({ copyValues, setCopyValues }) => {
         ...copyValues,
         place: {
           country: newValue,
-          state: "",
-          city: "",
+          state: false,
+          city: false,
         },
       });
     } else {
@@ -610,7 +584,7 @@ const FilterLocation = ({ copyValues, setCopyValues }) => {
       </Text>
       <Select {...propsCountry}>
         <Select.Item label="Venezuela" value="Venezuela" />
-        <Select.Item label="Sin ubicación" value="" />
+        <Select.Item label="Sin ubicación" value={false} />
       </Select>
       {place.country === "Venezuela" && (
         <Select {...propsState}>
@@ -619,7 +593,8 @@ const FilterLocation = ({ copyValues, setCopyValues }) => {
           ))}
         </Select>
       )}
-      {place.state.length > 0 && (
+      {/* {place.state.length > 0 && ( */}
+      {place.state && (
         <Select {...propsCity}>
           {places.map((item) => {
             if (item.state === place.state) {

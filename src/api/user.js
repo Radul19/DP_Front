@@ -1,8 +1,5 @@
 import axios from "axios"
-// export const url = "http://192.168.1.109:4000/"
-// export const url = "https://dp-back.vercel.app/"
-// export const url = "http://192.168.43.188:4000/"
-export const url = "http://172.20.10.5:4000/"
+import url from './url'
 
 const offline = false
 
@@ -78,6 +75,7 @@ export const getDeliverys = async (data) => {
         }
     }
     let response
+    console.log(data)
     await axios.post(`${url}getDeliverys`, data).then(res => {
         // console.log(res.data)
         response = res
@@ -111,7 +109,7 @@ export const getMessages = async (chat_id) => {
 }
 export const getMyChat = async (user_id) => {
     let response
-    await axios.post(`${url}getMyChat`, {user_id}).then(res => {
+    await axios.post(`${url}getMyChat`, { user_id }).then(res => {
         // console.log(res.data)
         response = res
     }).catch(err => {
@@ -121,9 +119,9 @@ export const getMyChat = async (user_id) => {
     return response
 }
 
-export const changePfp = async (base64,user_id,old_pfp) => {
+export const changePfp = async (base64, user_id, old_pfp) => {
     let response
-    await axios.post(`${url}changePfp`, {base64,user_id,old_pfp}).then(res => {
+    await axios.post(`${url}changePfp`, { base64, user_id, old_pfp }).then(res => {
         // console.log(res.data)
         response = res
     }).catch(err => {
@@ -133,9 +131,9 @@ export const changePfp = async (base64,user_id,old_pfp) => {
     return response
 }
 
-export const createComplaint = async (title,description,creator,target,images) => {
+export const createComplaint = async (title, description, creator, target, images) => {
     let response
-    await axios.post(`${url}createComplaint`, {title,description,creator,target,images}).then(res => {
+    await axios.post(`${url}createComplaint`, { title, description, creator, target, images }).then(res => {
         // console.log(res.data)
         response = res
     }).catch(err => {
@@ -144,4 +142,5 @@ export const createComplaint = async (title,description,creator,target,images) =
 
     return response
 }
+
 

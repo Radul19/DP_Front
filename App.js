@@ -34,7 +34,9 @@ import ChatList from "./src/screens/user/08-ChatList";
 import ChangePFP from "./src/screens/user/09-ChangePFP";
 import Test from "./src/screens/Test";
 import Complaint from "./src/screens/user/10-Complaint";
+import Notifications from "./src/screens/user/11-Notifications.jsx";
 import { getLocalData } from "./src/components/localStorage";
+import UserDataEdit from "./src/screens/admin/10-UserDataEdit";
 
 const config = {
 	dependencies: {
@@ -99,21 +101,8 @@ export default function App() {
 		location, setLocation, userData, setUserData
 	}
 
-	// const getLocationInfo = async () => {
-	// 	let { status } = await Location.requestForegroundPermissionsAsync();
-	// 	if (status !== "granted") {
-	// 		//   setMsg("error", "Permission to access location was denied");
-	// 		return;
-	// 	}
-	// 	if (location.country.length < 1) {
-	// 		// let {coords} = await Location.getCurrentPositionAsync({});
-	// 		// const res = await getLocation([coords.longitude, coords.latitude]);
-	// 		const res = await getLocation([-71.47, 10.39]);
-	// 		setLocation({ ...res, auto: true });
-	// 	}
-	// };
 	const getLocationInfo = async () => {
-		let { status } = await Location.requestBackgroundPermissionsAsync();
+		let { status } = await Location.requestForegroundPermissionsAsync();
 		if (status !== "granted") {
 			//   setMsg("error", "Permission to access location was denied");
 			return;
@@ -123,12 +112,28 @@ export default function App() {
 				accuracy: Location.Accuracy.Highest,
 				maximumAge: 10000,
 			});
-			console.log(coords)
-			// const res = await getLocation([coords.longitude, coords.latitude]);
-			const res = await getLocation([-71.47, 10.39]);
+			const res = await getLocation([coords.longitude, coords.latitude]);
+			// const res = await getLocation([-71.47, 10.39]);
 			setLocation({ ...res, auto: true });
 		}
 	};
+	// const getLocationInfo = async () => {
+	// 	let { status } = await Location.requestBackgroundPermissionsAsync();
+	// 	if (status !== "granted") {
+	// 		//   setMsg("error", "Permission to access location was denied");
+	// 		return;
+	// 	}
+	// 	if (location.country.length < 1) {
+	// 		let { coords } = await Location.getCurrentPositionAsync({
+	// 			accuracy: Location.Accuracy.Highest,
+	// 			maximumAge: 10000,
+	// 		});
+	// 		console.log(coords)
+	// 		// const res = await getLocation([coords.longitude, coords.latitude]);
+	// 		const res = await getLocation([-71.47, 10.39]);
+	// 		setLocation({ ...res, auto: true });
+	// 	}
+	// };
 
 	useEffect(() => {
 		getLocationInfo()
@@ -144,8 +149,8 @@ export default function App() {
 					<Stack.Navigator screenOptions={{
 						headerShown: false
 					}} >
-						{/* <Stack.Screen name="Complaint" component={Complaint} /> */}
-						{/* <Stack.Screen name="ChangePFP" component={ChangePFP} /> */}
+						
+						{/* <Stack.Screen name="SearchUserPage" component={SearchUserPage} /> */}
 						{/** USER PAGES */}
 						<Stack.Group  >
 							<Stack.Screen name="Welcome" component={Welcome} />
@@ -158,6 +163,7 @@ export default function App() {
 							<Stack.Screen name="Complaint" component={Complaint} />
 							<Stack.Screen name="DeliveryPage" component={DeliveryPage} />
 							<Stack.Screen name="ChatList" component={ChatList} />
+							<Stack.Screen name="Notifications" component={Notifications} />
 						</Stack.Group>
 
 						{/** DELIVERY PAGES */}
@@ -174,7 +180,7 @@ export default function App() {
 							<Stack.Screen name="Complaints" component={Complaints} />
 							<Stack.Screen name="ComplaintsData" component={ComplaintsData} />
 							<Stack.Screen name="SearchUserPage" component={SearchUserPage} />
-							<Stack.Screen name="UserDataPage" component={UserDataPage} />
+							<Stack.Screen name="UserDataEdit" component={UserDataEdit} />
 						</Stack.Group>
 
 

@@ -8,30 +8,91 @@ import {
   HStack,
   Avatar,
   Pressable,
+  Center,
 } from "native-base";
-import { useContext } from "react";
+import { useCallback, useContext, useState } from "react";
 import { Context } from "../../utils/Context";
 import girl from "../../images/girl2.png";
 import { useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
+import { RefreshControl } from "react-native";
+import Navbar from "../../components/Navbar";
+import Loader from "../../components/Loader";
+import { getUsers } from "../../api/authorization";
 
 const colorStatus = ["success.500", "error.500", "yellow.500"];
 
 const SearchUserPage = ({ navigation }) => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [input, setInput] = useState("");
+  const [emptyResult, setEmptyResult] = useState(false);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchData = async () => {
+    setLoading(true);
+    const { status, data } = await getUsers(input);
+    setLoading(false);
+    if (status === 200) {
+      setData(data);
+    } else if (status === 204) {
+      setEmptyResult(true);
+    } else {
+      console.log("error");
+    }
+  };
+
+  useEffect(() => {
+    const willFocusSubscription = navigation.addListener("focus", () => {
+      fetchData();
+    });
+
+    return willFocusSubscription;
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      // setLoading(true);
+      const timeoutID = setTimeout(async () => {
+        // Send Axios request here
+        fetchData();
+      }, 3000);
+      return () => clearTimeout(timeoutID);
+    })();
+  }, [input]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  }, []);
+
   return (
-    <ScrollView
-      bg="darkBlue.900"
-      flex={1}
-      contentContainerStyle={{ flexGrow: 1 }}
-      stickyHeaderIndices={[1]}
-    >
-      {/* <Header navigation={navigation} /> */}
-      <HStack p={4} bg="blueGray.800" alignItems="center">
-        <Heading color="light.50">Buscador de Usuarios</Heading>
-        {/* <SearchIcon ml={4} /> */}
-      </HStack>
-      <InputCtn />
-      <SearchResults />
-    </ScrollView>
+    <>
+      <ScrollView
+        bg="darkBlue.900"
+        flex={1}
+        contentContainerStyle={{ flexGrow: 1 }}
+        stickyHeaderIndices={[1]}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        {/* <Header navigation={navigation} /> */}
+        <HStack p={4} bg="blueGray.800" alignItems="center">
+          <Heading color="light.50">Buscador de Usuarios</Heading>
+          {/* <SearchIcon ml={4} /> */}
+        </HStack>
+        <InputCtn {...{ input, setInput }} />
+        <Loader active={loading} />
+        {emptyResult && <EmptyText />}
+        {!loading && <SearchResults data={data} />}
+      </ScrollView>
+      <Box position="absolute" bottom={0} w="100%">
+        <Navbar state={5} />
+      </Box>
+    </>
   );
 };
 
@@ -101,8 +162,10 @@ const Header = ({ navigation }) => {
   );
 };
 ///// INPUT
-const InputCtn = () => {
+const InputCtn = ({ setInput, input }) => {
   const inputProps = {
+    value: input,
+    onChangeText: setInput,
     placeholder: "Buscar usuario",
     bg: "light.50",
     borderWidth: 2,
@@ -146,39 +209,23 @@ const InputCtn = () => {
 };
 
 //// SEARCH RESULT
-const SearchResults = () => {
+const SearchResults = ({ data }) => {
   return (
     <Box px={4} pb={16} bg="darkBlue.900">
-      <Card status={0} />
-      <Card status={1} />
-      <Card status={2} />
-      <Card status={0} />
-      <Card status={1} />
-      <Card status={2} />
-      <Card status={0} />
-      <Card status={1} />
-      <Card status={2} />
-      <Card status={0} />
-      <Card status={1} />
-      <Card status={2} />
-      <Card status={0} />
-      <Card status={1} />
-      <Card status={2} />
-      <Card status={0} />
-      <Card status={1} />
-      <Card status={2} />
+      {data.map((item) => (
+        <Card item={item} key={item._id} />
+      ))}
     </Box>
   );
 };
 
 ///// CARD
-const Card = () => {
+const Card = ({ item }) => {
+  const { name, second_name, profile_pic, card_id, place } = item;
   const nav = useNavigation();
-  const goChat = () => {
-    nav.navigate("Chat");
-  };
+
   const goUser = () => {
-    nav.navigate("UserDataPage");
+    nav.navigate("UserDataEdit", { user: item });
   };
 
   return (
@@ -198,17 +245,29 @@ const Card = () => {
         const textC = isPressed ? "darkBlue.900" : "light.50";
         return (
           <>
-            <Avatar my={3} mx={4} size={16} source={girl} />
+            <Avatar my={3} mx={4} size={16} source={{ uri: profile_pic }} />
             <Box justifyContent="space-evenly">
-              <Text fontSize={16} color={textC}>
-                Dane Joe
+              <Text color={textC}>
+                {name.split(" ", 1) + " " + second_name.split(" ", 1)}
               </Text>
-              <Text color={textC}>29234987</Text>
-              <Text color={textC}>Zulia - Cabimas</Text>
+              <Text color={textC}>{card_id}</Text>
+              {place.state && place.city ? (
+                <Text color={textC}>{place.state + " - " + place.city}</Text>
+              ) : (
+                <Text color={textC}>{place.country}</Text>
+              )}
             </Box>
           </>
         );
       }}
     </Pressable>
+  );
+};
+
+const EmptyText = () => {
+  return (
+    <Center mt={-12}>
+      <Text color="muted.500">{"No se han encontrado resultados ):"}</Text>
+    </Center>
   );
 };

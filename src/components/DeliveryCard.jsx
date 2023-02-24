@@ -26,7 +26,11 @@ const DeliveryCard = ({ user, findChat }) => {
         my: 2,
       }}
     >
-      <Box px={1.5} py={-2} bg={colorStatus[delivery_status]}></Box>
+      {delivery_status < 3 ? (
+        <Box px={1.5} py={-2} bg={colorStatus[delivery_status]}></Box>
+      ) : (
+        <Box px={1.5} py={-2} bg="#ffffff00"></Box>
+      )}
       <Pressable onPress={goDeli} _pressed={{ opacity: 0.5 }}>
         <Avatar
           alignSelf="center"
@@ -45,20 +49,13 @@ const DeliveryCard = ({ user, findChat }) => {
           <Text fontSize={16} color="light.50">
             {name.split(" ", 1) + " " + second_name.split(" ", 1)}
           </Text>
-          <Box
-            {...{
-              borderRadius: 12,
-              borderWidth: 1,
-              borderColor: colorStatus[delivery_status],
-              py: 0.5,
-              px: 4,
-              justifyContent: "center",
-            }}
-          >
-            <Text {...{ fontSize: 10, color: colorStatus[delivery_status] }}>
-              {textStatus[delivery_status]}
-            </Text>
-          </Box>
+          {delivery_status < 3 && (
+            <Box borderColor={colorStatus[delivery_status]} {...statusBoxProps}>
+              <Text {...{ fontSize: 10, color: colorStatus[delivery_status] }}>
+                {textStatus[delivery_status]}
+              </Text>
+            </Box>
+          )}
         </Box>
         <Text color="light.50">Zulia - Cabimas</Text>
       </Pressable>
@@ -68,3 +65,11 @@ const DeliveryCard = ({ user, findChat }) => {
 };
 
 export default DeliveryCard;
+
+const statusBoxProps = {
+  borderRadius: 12,
+  borderWidth: 1,
+  py: 0.5,
+  px: 4,
+  justifyContent: "center",
+};

@@ -1,8 +1,8 @@
 import axios from "axios"
+import url from './url'
 // export const url = "http://192.168.1.109:4000/"
-// export const url = "https://dp-back.vercel.app/"
 // export const url = "http://192.168.43.188:4000/"
-export const url = "http://172.20.10.5:4000/"
+// export const url = "http://172.20.10.5:4000/"
 
 const offline = false
 
@@ -62,6 +62,31 @@ export const complaintAction = async (complaint_id, target_id, action) => {
     console.log(action)
     let response
     await axios.post(`${url}complaintAction`, { complaint_id, target_id, action }).then(res => {
+        // console.log(res.data)
+        response = res
+    }).catch(err => {
+        response = catchError(err)
+    })
+
+    return response
+}
+
+
+export const getUsers = async (text) => {
+    let response
+    console.log(text)
+    await axios.post(`${url}getUsers`, { text }).then(res => {
+        // console.log(res.data)
+        response = res
+    }).catch(err => {
+        response = catchError(err)
+    })
+
+    return response
+}
+export const updateUserInfo = async (data) => {
+    let response
+    await axios.post(`${url}updateUserInfo`, data).then(res => {
         // console.log(res.data)
         response = res
     }).catch(err => {

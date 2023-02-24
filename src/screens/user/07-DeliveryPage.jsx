@@ -14,7 +14,7 @@ import {
   Text,
   useTheme,
 } from "native-base";
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import profile from "../../images/girl2.png";
 import Navbar from "../../components/Navbar";
 /// ICONS
@@ -30,6 +30,7 @@ import {
 } from "../../components/IconMonstr";
 import { Context } from "../../utils/Context";
 import { changeDeliStatus } from "../../api/user";
+import socket from "../../utils/socket";
 
 const colorStatus = ["success.500", "error.500", "yellow.500", "muted.500"];
 const textStatus = ["Disponible", "Ocupado", "Ausente", "Inactivo"];
@@ -58,12 +59,20 @@ const DeliveryProfile = ({ navigation: nav, route }) => {
 };
 
 const UserContent = ({ user, nav, test }) => {
-  const { name, second_name, profile_pic, email, delivery_status } = user;
+  const { name, second_name, profile_pic, email, delivery_status, _id } = user;
+  const { userData } = useContext(Context);
   const { btnPrimary } = useTheme();
 
+  useEffect(() => {
+    socket.on("found_chat", (chat) => {
+      nav.navigate("Chat", chat);
+    });
+  }, [socket]);
+
   const goChat = () => {
-    nav.navigate("Chat");
+    socket.emit("find_chat", [userData._id, _id]);
   };
+
   return (
     <Box flex={1}>
       <Header nav={nav} selfie={profile_pic} />
@@ -74,32 +83,25 @@ const UserContent = ({ user, nav, test }) => {
         <Text color="light.50" mb={4}>
           {email}
         </Text>
-        {/* <Box flexDir="row" w="50%" justifyContent="space-between" >
-              <Star_Filled key={1} />
-              <Star_Filled key={2} />
-              <Star_Filled key={3} />
-              <Star_Filled key={4} />
-              <Star_Filled key={5} />
-            </Box> */}
-        {/* <Text color="light.50" mt={2} mb={6}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Pellentesque id mi tellus. Donec id facilisis nisl. Vestibulum
-              vitae est blandit, cursus tortor a, scelerisque sapien.
-            </Text> */}
-        <Button
+        <Pressable
           {...btnPrimary}
           {...{
             mt: 0,
             mb: 8,
             w: "100%",
-            flexDirection: "row-reverse",
+            flexDirection: "row",
+            p: 2,
+            borderRadius: 6,
             _text: { fontWeight: "bold", color: "black", mr: 2 },
+            justifyContent: "center",
           }}
           onPress={goChat}
-          endIcon={<ChatIcon color="#000" size={5} />}
         >
-          Iniciar Chat
-        </Button>
+          <Text color="darkBlue.900" mr={4}>
+            Iniciar Chat
+          </Text>
+          <ChatIcon color="#000" size={5} />
+        </Pressable>
         <Box px={2} w="100%">
           <Box flexDir="row" w="100%">
             <Text fontSize={16} mr={4} color="light.50">
@@ -142,7 +144,7 @@ const OwnContent = ({ user, nav }) => {
   const [statusSpin, setStatusSpin] = useState(false);
 
   const onChangeStatus = async () => {
-    const num = statusMenu < 4 ? statusMenu + 1 : 0;
+    const num = statusMenu < 3 ? statusMenu + 1 : 0;
     setStatusSpin(true);
     const { status, data } = await changeDeliStatus(_id, num);
     setStatusSpin(false);
@@ -158,7 +160,7 @@ const OwnContent = ({ user, nav }) => {
       <Header nav={nav} selfie={profile_pic} />
       <Box {...propsContent}>
         <Text color="light.50" mt="30%" fontSize={26} mb={1}>
-          {name.split(" ", 1) + second_name.split(" ", 1)}
+          {name.split(" ", 1) + " " + second_name.split(" ", 1)}
         </Text>
         <Text color="light.50" mb={6}>
           {email}
@@ -247,7 +249,8 @@ const Header = ({ nav, selfie }) => {
         </Button>
 
         <Avatar {...avatarProps} source={{ uri: selfie }} />
-        <ShareIcon size={6} color="yellow.500" />
+        <Box size={8}></Box>
+        {/* <ShareIcon size={6} color="yellow.500" /> */}
       </Box>
     </Box>
   );

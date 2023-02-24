@@ -23,7 +23,7 @@ const Navbar = ({ state = 1 }) => {
     navigate("Dashboard");
   };
   const goNotify = () => {
-    // navigate('Dashboard')
+    navigate('Notifications')
   };
   const goChat = () => {
     navigate("ChatList");
