@@ -121,29 +121,7 @@ const Header = ({ navigation, selfie }) => {
         <Pressable _pressed={{ opacity: 0.5 }} mt={4} onPress={pressEditPfp}>
           <Avatar size="2xl" source={{ uri: selfie }} />
         </Pressable>
-        <Menu
-          placement="bottom right"
-          w="100%"
-          trigger={(triggerProps) => {
-            return (
-              <Pressable
-                alignItems="center"
-                justifyContent="center"
-                size={8}
-                accessibilityLabel="More options menu"
-                {...triggerProps}
-              >
-                <HamburgerIcon color="yellow.500" size={6} />
-              </Pressable>
-            );
-          }}
-        >
-          <Menu.Group title="Opciones">
-            <Menu.Item _text={{ color: "light.50" }}>Opcion 1</Menu.Item>
-            <Menu.Item _text={{ color: "light.50" }}>Opcion 2</Menu.Item>
-            <Menu.Item _text={{ color: "light.50" }}>Opcion 3</Menu.Item>
-          </Menu.Group>
-        </Menu>
+        <Box size={8} ></Box>
       </Box>
     </Box>
   );

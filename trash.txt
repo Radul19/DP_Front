@@ -72,3 +72,23 @@ Denuncia
 Aprov deny Denuncia
 Keep account
 Searchbar
+
+Una vez que hayas descargado ambos archivos, ve con el CMD
+
+1- Abrir CMD
+2- Escribir "cd " y luego mover la carpeta DP_Front o DP_Back al cmd 
+3- Presionar Enter
+4- Escribir npm i
+5- Repetir con la otra carpeta
+Nota: estos paso de instalacion solo son necesarios la primera vez, luego solo hace falta abrir cmd, copiar la url de la carpeta y ya se pueden usar los comandos de inicializacion
+
+
+DP_Front:
+Para iniciar el front se usa el comando "npx expo start"
+
+DP_Back:
+Para inicar el backend se usa el comando "npm start"
+
+Url:
+Abrir DP_Front > src > api > url.js con bloc de notas, y cambiar la IP como se necesite (ipv4)
+es necesario reiniciar el front luego del cambio

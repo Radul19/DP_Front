@@ -69,10 +69,13 @@ const Dashboard = ({ navigation }) => {
   };
 
   const fetchData = async () => {
+    // console.log(filters)
+    setEmptyResult(false);
     const { status, data } = await getDeliverys({ text: textInpt, ...filters });
     if (status === 200) {
       setDeliData(data);
     } else if (status === 204) {
+      setDeliData([]);
       setEmptyResult(true);
     } else {
       console.log("error");
@@ -88,7 +91,7 @@ const Dashboard = ({ navigation }) => {
       }, 3000);
       return () => clearTimeout(timeoutID);
     })();
-  }, [textInpt,filters]);
+  }, [textInpt, filters]);
 
   useEffect(() => {
     socket.on("found_chat", (chat) => {
@@ -342,9 +345,9 @@ const Card = ({ user, findChat }) => {
 const FilterModal = ({ visible, close, setFilters, filters }) => {
   const [copyValues, setCopyValues] = useState({
     place: {
-      country:false,
-      state:false,
-      city:false,
+      country: false,
+      state: false,
+      city: false,
     },
     del_status: false,
   });
@@ -440,17 +443,19 @@ const RadioBtns = ({ copyValues, setCopyValues }) => {
   };
   return (
     <>
-    <Text color="light.50" fontSize={14} mt={2} >Estado</Text>
-    <Radio.Group
-      name="myRadioGroup"
-      value={copyValues.del_status}
-      onChange={updateValue}
-    >
-      <Radio {...propsRadioAll}>Todos</Radio>
-      <Radio {...propsRadioSuccess}>Disponible</Radio>
-      <Radio {...propsRadioBusy}>Ocupado</Radio>
-      <Radio {...propsRadioWait}>Ausente</Radio>
-    </Radio.Group>
+      <Text color="light.50" fontSize={14} mt={2}>
+        Estado
+      </Text>
+      <Radio.Group
+        name="myRadioGroup"
+        value={copyValues.del_status}
+        onChange={updateValue}
+      >
+        <Radio {...propsRadioAll}>Todos</Radio>
+        <Radio {...propsRadioSuccess}>Disponible</Radio>
+        <Radio {...propsRadioBusy}>Ocupado</Radio>
+        <Radio {...propsRadioWait}>Ausente</Radio>
+      </Radio.Group>
     </>
   );
 };
@@ -616,7 +621,7 @@ const FilterLocation = ({ copyValues, setCopyValues }) => {
 const EmptyText = () => {
   return (
     <Center mt={-12}>
-      <Text color="muted.500">{"No se han encontrado resultados ):"}</Text>
+      <Text color="muted.500">{"No se han encontrado resultados "}</Text>
     </Center>
   );
 };
