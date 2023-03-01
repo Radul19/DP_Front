@@ -107,20 +107,20 @@ export default function App() {
 			//   setMsg("error", "Permission to access location was denied");
 			return;
 		}
-		if (location.country.length < 1) {
-			let { coords } = await Location.getCurrentPositionAsync({
-				accuracy: Location.Accuracy.Highest,
-				maximumAge: 10000,
-			});
-			const res = await getLocation([coords.longitude, coords.latitude]);
-			// const res = await getLocation([-71.47, 10.39]);
-			setLocation({ ...res, auto: true });
-		}
+
+		let { coords } = await Location.getCurrentPositionAsync({
+			accuracy: Location.Accuracy.Highest,
+			maximumAge: 10000,
+		});
+		const res = await getLocation([coords.longitude, coords.latitude]);
+		// const res = await getLocation([-71.47, 10.39]);
+		setLocation({ ...res, auto: true })
+
 	};
 
 	useEffect(() => {
 		getLocationInfo()
-	}, [location])
+	}, [])
 
 
 	return (
@@ -132,7 +132,7 @@ export default function App() {
 					<Stack.Navigator screenOptions={{
 						headerShown: false
 					}} >
-						
+
 						{/* <Stack.Screen name="SearchUserPage" component={SearchUserPage} /> */}
 						{/** USER PAGES */}
 						<Stack.Group  >

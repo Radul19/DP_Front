@@ -34,10 +34,8 @@ const Welcome = ({ navigation }) => {
 
   
 	const localUser = async () => {
-		console.log('this works')
 		const data = await getLocalData("@userLogin");
 		if (data) {
-			console.log('this too')
 			const parseData = JSON.parse(data)
 			setUserData(parseData);
 			navigation.navigate('Dashboard')

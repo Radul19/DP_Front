@@ -197,12 +197,12 @@ const Header = ({ navigation }) => {
             " " +
             userData.second_name.split(" ", 1)}
         </Text>
-        {/* {state && city && (
+        {state && city && (
           <Text {...{ color: "light.50", fontSize: 12 }}>
             {state} - {city}
           </Text>
-        )} */}
-        <Text {...{ color: "light.50", fontSize: 12 }}>Zulia - Cabimas</Text>
+        )}
+        {/* <Text {...{ color: "light.50", fontSize: 12 }}>Zulia - Cabimas</Text> */}
       </Box>
     </Box>
   );
