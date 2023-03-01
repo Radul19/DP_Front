@@ -78,13 +78,16 @@ const Chat = ({ navigation, route }) => {
   const [updateInterval, setUpdateInterval] = useState(false);
   const [complaintModal, setComplaintModal] = useState(false);
 
-  const startInterval = async () => {
-    if (imDelivery) {
+  const startInterval = async (imDel) => {
+    console.log(imDel)
+    if (imDel) {
       let interv = setInterval(async () => {
         let { coords } = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.Highest,
           maximumAge: 5000,
         });
+        console.log('im delivery interval')
+        console.log(coords)
         socket.emit("delivery_pos", {
           latitude: coords.latitude,
           longitude: coords.longitude,
@@ -106,7 +109,7 @@ const Chat = ({ navigation, route }) => {
     });
     setChat({ ...chat, live_sharing: !chat.live_sharing });
     if (!chat.live_sharing) {
-      startInterval();
+      startInterval(imDelivery);
     } else {
       cleanupInterval();
     }
@@ -155,7 +158,7 @@ const Chat = ({ navigation, route }) => {
     }
 
     if (route.params?.chat.live_sharing) {
-      startInterval();
+      startInterval(route.params?.chat.delivery_id === userData._id);
     }
 
     /** SOCKETS */
@@ -729,18 +732,18 @@ const LiveMapModal = ({ liveMapModal, setLiveMapModal }) => {
           <MapView
             style={{ minHeight: wh * 0.8 }}
             initialRegion={{
-              longitude: -71.4715612,
-              latitude: 10.39419,
-              // longitude: liveMapModal.longitude,
-              // latitude: liveMapModal.latitude,
+              // longitude: -71.4715612,
+              // latitude: 10.39419,
+              longitude: liveMapModal.longitude,
+              latitude: liveMapModal.latitude,
               latitudeDelta: 0.005,
               longitudeDelta: 0.006,
             }}
           >
             <Marker
               coordinate={{
-                longitude: -71.4715612,
-                latitude: 10.39419,
+                longitude: liveMapModal.longitude,
+              latitude: liveMapModal.latitude,
               }}
             />
           </MapView>

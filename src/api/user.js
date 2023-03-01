@@ -75,7 +75,6 @@ export const getDeliverys = async (data) => {
         }
     }
     let response
-    console.log(data)
     await axios.post(`${url}getDeliverys`, data).then(res => {
         // console.log(res.data)
         response = res
