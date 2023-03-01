@@ -1,4 +1,4 @@
-import { Box, Heading, ScrollView, Text } from "native-base";
+import { Box, Heading, Modal, Pressable, ScrollView, Text } from "native-base";
 import { useState, useEffect, useContext, useCallback } from "react";
 import { RefreshControl } from "react-native";
 import { getMyChat } from "../../api/user";
@@ -13,11 +13,11 @@ const ChatList = ({ navigation: nav }) => {
   const [chatData, setChatData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [emptyResult, setEmptyResult] = useState(false);
+  const [chatToDel, setChatToDel] = useState(false)
 
   const fetchData = async () => {
     setChatData([]);
     const { status, data } = await getMyChat(userData._id);
-    console.log(data);
     if (status === 200) {
       setChatData(data);
     } else if (status === 204) {
@@ -47,6 +47,10 @@ const ChatList = ({ navigation: nav }) => {
     setRefreshing(false);
   }, []);
 
+  const closeModal = ()=>{
+    setChatToDel(false)
+  }
+
   return (
     <>
       <ScrollView
@@ -65,24 +69,26 @@ const ChatList = ({ navigation: nav }) => {
           {emptyResult && <EmptyText />}
           {!loading && (
             <Box px={4} pb={16} bg="darkBlue.900">
-              {chatData.map(
-                (chat) => {
-                  const { _id, participants } = chat;
-                  let anotherUser =
-                    participants[0]._id === userData._id
-                      ? participants[1]
-                      : participants[0];
-                  if (anotherUser.user_type > 1) {
-                    return (
-                      <DeliveryCard
-                        key={_id}
-                        user={anotherUser}
-                        findChat={findChat}
-                      />
-                    );
-                  }
+              {chatData.map((chat) => {
+                const { _id, participants } = chat;
+                let anotherUser =
+                  participants[0]._id === userData._id
+                    ? participants[1]
+                    : participants[0];
+                if (anotherUser.user_type > 1) {
+                  return (
+                    <DeliveryCard
+                      key={_id}
+                      user={anotherUser}
+                      findChat={findChat}
+                      chat_id={_id}
+                      refresh={fetchData}
+                      chatList={true}
+                      setChatToDel={setChatToDel}
+                    />
+                  );
                 }
-              )}
+              })}
             </Box>
           )}
         </Box>

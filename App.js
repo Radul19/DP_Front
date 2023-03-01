@@ -117,23 +117,6 @@ export default function App() {
 			setLocation({ ...res, auto: true });
 		}
 	};
-	// const getLocationInfo = async () => {
-	// 	let { status } = await Location.requestBackgroundPermissionsAsync();
-	// 	if (status !== "granted") {
-	// 		//   setMsg("error", "Permission to access location was denied");
-	// 		return;
-	// 	}
-	// 	if (location.country.length < 1) {
-	// 		let { coords } = await Location.getCurrentPositionAsync({
-	// 			accuracy: Location.Accuracy.Highest,
-	// 			maximumAge: 10000,
-	// 		});
-	// 		console.log(coords)
-	// 		// const res = await getLocation([coords.longitude, coords.latitude]);
-	// 		const res = await getLocation([-71.47, 10.39]);
-	// 		setLocation({ ...res, auto: true });
-	// 	}
-	// };
 
 	useEffect(() => {
 		getLocationInfo()

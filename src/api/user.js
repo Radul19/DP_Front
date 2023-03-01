@@ -142,4 +142,16 @@ export const createComplaint = async (title, description, creator, target, image
     return response
 }
 
+export const deleteChat = async (chat_id, user_id) => {
+    let response
+    await axios.post(`${url}deleteChat`, { chat_id, user_id }).then(res => {
+        // console.log(res.data)
+        response = res
+    }).catch(err => {
+        response = catchError(err)
+    })
+
+    return response
+}
+
 
